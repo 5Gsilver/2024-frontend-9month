@@ -1,22 +1,19 @@
+import { getPosts } from "@/api/posts.api";
 import Page from "@/components/Page";
-import { Post } from "@/schemas/posts.schema";
-import Link from "next/link";
+import PostsList from "./_components/PostsList";
 
 async function HomePage() {
-  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const posts = (await response.json()) as Post[];
+  const posts = await getPosts();
+
+  if (!posts) return <strong>포스트 목록을 불러오는 데 실패했습니다.</strong>;
 
   return (
-    <Page title="All Posts">
-      <ul className="grid grid-cols-1 gap-y-4">
-        {posts.map((post) => (
-          <li key={post.id}>
-            <Link href={`/posts/${post.id}`}>{post.title}</Link>
-          </li>
-        ))}
-      </ul>
+    <Page title="전체 글">
+      <PostsList posts={posts} />
     </Page>
   );
 }
+
+export const dynamic = "force-dynamic";
 
 export default HomePage;
